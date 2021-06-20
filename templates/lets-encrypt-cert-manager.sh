@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-set -euxo pipefail
+set -euo pipefail
 
 EXTRA_PARAMETERS=""
 if [[ -v LETS_ENCRYPT_RESOURCE_PROVIDER ]]; then
