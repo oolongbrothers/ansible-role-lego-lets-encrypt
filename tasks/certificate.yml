@@ -47,7 +47,7 @@
     - name: "Install Let's Encrypt cert manager service for certificate {{ lets_encrypt_resource.common_name }}"
       template:
         src: "override.conf"
-        dest: /lib/systemd/system/lets-encrypt-cert-manager@{{ lets_encrypt_resource.common_name | replace('*', '_') }}.service.d/override.conf
+        dest: "/lib/systemd/system/lets-encrypt-cert-manager@{{ lets_encrypt_resource.common_name | replace('*', '_') }}.service.d/override.conf"
         owner: root
         group: root
         mode: 0600
@@ -57,15 +57,25 @@
         - lets_encrypt_resource is not skipped
         - ( lets_encrypt_resource_stat_result.stat.exists == false ) or ( lets_encrypt_ressource_validity_check.failed )
 
+    - name: "Schedule Let's Encrypt cert manager service for certificate {{ lets_encrypt_resource.common_name }}"
+      template:
+        src: "lets-encrypt-cert-manager@.timer"
+        dest: "/lib/systemd/system/lets-encrypt-cert-manager@{{ lets_encrypt_resource.common_name | replace('*', '_') }}.timer"
+        owner: root
+        group: root
+        mode: 0644
+      notify: systemd daemon-reload
+
     - meta: flush_handlers
 
     - name: "Start Let's Encrypt cert manager service for certificate {{ lets_encrypt_resource.common_name }}"
       systemd:
         name: "lets-encrypt-cert-manager@{{ lets_encrypt_resource.common_name | replace('*', '_') }}.service"
-        state: stopped
-        enabled: false
-    
-    # - name: Create systemd timer
-    #     minute: "{{ lets_encrypt_cron_minute | default('0') }}"
-    #     hour: "{{ lets_encrypt_cron_hour | default('11') }}"
-    #     weekday: "{{ lets_encrypt_cron_weekday | default(omit) }}"
+        state: started
+        enabled: true
+
+    - name: "Schedule Let's Encrypt cert manager service for certificate {{ lets_encrypt_resource.common_name }}"
+      systemd:
+        name: "lets-encrypt-cert-manager@{{ lets_encrypt_resource.common_name | replace('*', '_') }}.timer"
+        state: started
+        enabled: true

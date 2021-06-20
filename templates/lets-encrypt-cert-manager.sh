@@ -20,8 +20,9 @@ fi
 if [[ -f "${LETS_ENCRYPT_DIRECTORY_PATH}/certificates/${LETS_ENCRYPT_RESOURCE_COMMON_NAME_ESCAPED}.crt" ]]; then
     # renew the certificate
     /usr/bin/lego \
-        --email="${LETS_ENCRYPT_ACCOUNT_EMAIL}" \
+        --domains="${LETS_ENCRYPT_RESOURCE_COMMON_NAME}" \
         --path="${LETS_ENCRYPT_DIRECTORY_PATH}" \
+        --email="${LETS_ENCRYPT_ACCOUNT_EMAIL}" \
         --server="${LETS_ENCRYPT_SERVER}" \
         ${EXTRA_PARAMETERS} \
         --accept-tos \
@@ -31,8 +32,8 @@ else
     # Register an account, then create and install the certificate
     /usr/bin/lego \
         --domains="${LETS_ENCRYPT_RESOURCE_COMMON_NAME}" \
-        --email="${LETS_ENCRYPT_ACCOUNT_EMAIL}" \
         --path="${LETS_ENCRYPT_DIRECTORY_PATH}" \
+        --email="${LETS_ENCRYPT_ACCOUNT_EMAIL}" \
         --server="${LETS_ENCRYPT_SERVER}" \
         ${EXTRA_PARAMETERS} \
         --accept-tos \

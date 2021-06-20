@@ -27,13 +27,9 @@ lets_encrypt_create_concatenated_pem_file: false
 # Use external CSR to specify metadata in certificate, in incompatible with lets_encrypt_create_concatenated_pem_file
 lets_encrypt_use_external_csr: true
 
-#
-# Optional cron expression variables
-#
-# If not set cronjob will run as : "0 11 * * *"
-#lets_encrypt_cron_minute: 0
-#lets_encrypt_cron_hour: 11
-#lets_encrypt_cron_weekday: 5
+# If not set, will be run every Friday at 11:15
+# For format, see https://www.freedesktop.org/software/systemd/man/systemd.time.html#Calendar%20Events
+lets_encrypt_systemd_timer_oncalendar: "Fri *-*-* 11:15:00"
 
 ##
 # Challenge Server (live or dev/staging)
