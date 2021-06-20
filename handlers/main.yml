@@ -1,3 +1,10 @@
 ---
+
 - name: "Update CA index"
+  become: true
   shell: /usr/sbin/update-ca-certificates
+
+- name: "systemd daemon-reload"
+  become: true
+  systemd:
+    daemon_reload: true

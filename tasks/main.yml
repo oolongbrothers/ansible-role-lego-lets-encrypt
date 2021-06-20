@@ -4,14 +4,13 @@
 - include: "lego.yml"
 
 - include: "csr.yml"
+  when: lets_encrypt_use_external_csr is true
 
 - name: "Create Certificates"
   include: "certificate.yml"
   with_items: "{{ lets_encrypt_resources }}"
   loop_control:
       loop_var: "lets_encrypt_resource"
-
-- include: "cron.yml"
 
 - include: "add-staging-as-trusted.yml"
   when: lets_encrypt_install_as_trusted

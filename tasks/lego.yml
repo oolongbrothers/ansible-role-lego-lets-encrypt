@@ -1,34 +1,78 @@
 ---
 
-- name: "Ensure directory for csr exists"
-  file:
-    path: "{{ lets_encrypt_directory_path }}/requests"
-    state: directory
+- name: Install lego
+  become: true
+  block:
 
-- name: "Ensure directory for private keys exists"
-  file:
-    path: "{{ lets_encrypt_directory_path }}/private"
-    state: directory
+    - name: Create user
+      user:
+        name: "{{ lets_encrypt_client_user }}"
+        shell: /bin/false
+        create_home: false
+        system: true
+      when: lets_encrypt_client_user != 'root'
 
-- name: "Ensure directory for certificates exists"
-  file:
-    path: "{{ lets_encrypt_directory_path }}/certificates"
-    state: directory
+    - name: "Ensure subdirectories for Lego (Let's Encrypt client) exist"
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ lets_encrypt_client_user }}"
+        mode: "755"
+      loop:
+        - "{{ lets_encrypt_directory_path }}"
+        - "{{ lets_encrypt_directory_path }}/lego"
+    
+    - name: "Ensure restricted subdirectory for Lego (Let's Encrypt client) exist"
+      file:
+        path: "{{ lets_encrypt_directory_path }}/certificates"
+        state: directory
+        owner: "{{ lets_encrypt_client_user }}"
+        mode: "700"
 
-- name: "Ensure directory for letsencrypt exists"
-  file:
-    path: "{{ lets_encrypt_directory_path }}/lego"
-    state: directory
+    - name: "Ensure restricted CSR subdirectories for Lego (Let's Encrypt client) exist"
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ lets_encrypt_client_user }}"
+        mode: "700"
+      loop:
+        - "{{ lets_encrypt_directory_path }}/private"
+        - "{{ lets_encrypt_directory_path }}/requests"
+      when: lets_encrypt_use_external_csr is true
 
-- name: "Download Lego (Let's Encrypt client)"
-  unarchive:
-    src: "{{ lets_encrypt_lego_archive_http_path }}"
-    dest: "{{ lets_encrypt_directory_path }}/lego"
-    creates: "{{ lets_encrypt_directory_path }}/lego/lego"
-    remote_src: yes
+    - name: "Download Lego (Let's Encrypt client)"
+      get_url:
+        url: "{{ lets_encrypt_lego_archive_http_path }}"
+        dest: /tmp/lego.tar.gz
+        checksum: "sha256:{{ lets_encrypt_lego_archive_http_path_sha256 }}"
+      changed_when: false
+        
+    - name: "Install lego (Let's Encrypt client)"
+      unarchive:
+        src: /tmp/lego.tar.gz
+        dest: "{{ lets_encrypt_directory_path }}/lego"
+        creates: "{{ lets_encrypt_directory_path }}/lego/lego"
+        remote_src: true
 
-- name: "Create lego link in bin folder"
-  file:
-    src: "{{ lets_encrypt_directory_path }}/lego/lego"
-    dest: "/usr/bin/lego"
-    state: link
+    - name: "Create lego link in bin folder"
+      file:
+        src: "{{ lets_encrypt_directory_path }}/lego/lego"
+        dest: "/usr/bin/lego"
+        state: link
+    
+    - name: Install Let's Encrypt cert manager script
+      template:
+        src: lets-encrypt-cert-manager.sh
+        dest: /usr/local/bin
+        owner: root
+        group: root
+        mode: 0755
+
+    - name: "Install Let's Encrypt cert manager systemd service template"
+      template:
+        src: lets-encrypt-cert-manager@.service
+        dest: /lib/systemd/system
+        owner: root
+        group: root
+        mode: 0644
+      notify: systemd daemon-reload

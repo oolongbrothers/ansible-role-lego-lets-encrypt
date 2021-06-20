@@ -1,9 +1,13 @@
 ---
 
 # Main directory for certificates and lego
-lets_encrypt_directory_path: "/etc/ssl"
+lets_encrypt_directory_path: "/etc/ssl/letsencrypt"
 
-lets_encrypt_lego_archive_http_path: "https://github.com/go-acme/lego/releases/download/v3.7.0/lego_v3.7.0_linux_amd64.tar.gz"
+lets_encrypt_lego_archive_http_path: "https://github.com/go-acme/lego/releases/download/v4.4.0/lego_v4.4.0_linux_amd64.tar.gz"
+lets_encrypt_lego_archive_http_path_sha256: "302a780a56dd52601aa5d1dc31e607599cb85b113830abe464001622ca8b80a2"
+
+# if you change this, lego will not be able to bind to ports 80/443 by default, read here: https://go-acme.github.io/lego/usage/cli/#running-without-root-privileges
+lets_encrypt_client_user: root
 
 #lets_encrypt_resource_name: "lego_resource_key"
 
@@ -16,6 +20,12 @@ lets_encrypt_renew_limit: 30
 # to allow localhost connections when staging certs are used.
 # DO NOT USE ON PRODUCTION
 lets_encrypt_install_as_trusted: false
+
+# Enable this to get a single .pem file with certs and private key concatenated (like e.g. HAproxy expects)
+lets_encrypt_create_concatenated_pem_file: false
+
+# Use external CSR to specify metadata in certificate, in incompatible with lets_encrypt_create_concatenated_pem_file
+lets_encrypt_use_external_csr: true
 
 #
 # Optional cron expression variables
@@ -76,3 +86,8 @@ lets_encrypt_install_as_trusted: false
 #     alt_names:
 #       - "somedomain3.sitewards.net"
 #       - "www.somedomain3.sitewards.net"
+#     environment_variables:
+#       - key: DNS_PROVIDER_API_USER
+#         value: api_user
+#       - key: DNS_PROVIDER_API_KEY
+#         value: api_key

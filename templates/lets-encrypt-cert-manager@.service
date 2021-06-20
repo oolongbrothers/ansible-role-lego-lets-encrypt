@@ -1,0 +1,12 @@
+[Unit]
+Description=Service for creating and maintaining a Let's Encrypt certificate for %i
+
+[Service]
+User={{ lets_encrypt_client_user }}
+Type=oneshot
+RemainAfterExit=false
+ExecStart=/usr/local/bin/lets-encrypt-cert-manager.sh
+ExecStop=/bin/true
+
+[Install]
+WantedBy=multi-user.target
