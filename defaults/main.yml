@@ -31,6 +31,9 @@ lets_encrypt_use_external_csr: true
 # For format, see https://www.freedesktop.org/software/systemd/man/systemd.time.html#Calendar%20Events
 lets_encrypt_systemd_timer_oncalendar: "Fri *-*-* 11:15:00"
 
+# Optional notification service to be notified in case creation/renewal fails
+# lets_encrypt_service_notify_on_failure: "email-notification@%n.service"
+
 ##
 # Challenge Server (live or dev/staging)
 # Dev and staging environments should be configured to use the

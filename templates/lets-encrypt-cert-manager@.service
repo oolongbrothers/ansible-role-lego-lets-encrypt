@@ -1,5 +1,8 @@
 [Unit]
 Description=Service for creating and maintaining a Let's Encrypt certificate for %i
+{% if lets_encrypt_service_notify_on_failure -%}
+OnFailure={{ lets_encrypt_service_notify_on_failure }}
+{% endif %}
 
 [Service]
 User={{ lets_encrypt_client_user }}
