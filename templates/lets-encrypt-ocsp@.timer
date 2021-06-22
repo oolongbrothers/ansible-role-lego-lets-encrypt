@@ -1,0 +1,10 @@
+[Unit]
+Description=Schedule automatic update of OCSP stapling data for certificate %i
+
+[Timer]
+OnCalendar={{ lets_encrypt_ocsp_manager_timer_oncalendar }}
+RandomizedDelaySec=300
+Persistent=true
+
+[Install]
+WantedBy=timers.target

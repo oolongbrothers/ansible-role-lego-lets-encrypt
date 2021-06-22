@@ -1,0 +1,16 @@
+[Unit]
+Description=Service for automatically keeping OSCP stapling information up to date for %i
+After=lets-encrypt-cert@%i.service
+{% if lets_encrypt_service_notify_on_failure -%}
+OnFailure={{ lets_encrypt_service_notify_on_failure }}
+{% endif %}
+
+[Service]
+User={{ lets_encrypt_client_user }}
+Type=oneshot
+RemainAfterExit=false
+ExecStart=/usr/local/bin/lets-encrypt-ocsp.sh %i
+Environment="LETS_ENCRYPT_DIRECTORY_PATH={{ lets_encrypt_directory_path }}"
+
+[Install]
+WantedBy=multi-user.target

@@ -1,16 +1,21 @@
 ---
-- include: "dependencies.yml"
+- import_tasks: "dependencies.yml"
 
-- include: "lego.yml"
+- import_tasks: "lego.yml"
 
-- include: "csr.yml"
+- import_tasks: "cert-service.yml"
+
+- import_tasks: "ocsp-service.yml"
+  when: lets_encrypt_ocsp_service is true
+
+- import_tasks: "csr.yml"
   when: lets_encrypt_use_external_csr is true
 
 - name: "Create Certificates"
-  include: "certificate.yml"
+  include_tasks: "certificate.yml"
   with_items: "{{ lets_encrypt_resources }}"
   loop_control:
       loop_var: "lets_encrypt_resource"
 
-- include: "add-staging-as-trusted.yml"
+- import_tasks: "add-staging-as-trusted.yml"
   when: lets_encrypt_install_as_trusted

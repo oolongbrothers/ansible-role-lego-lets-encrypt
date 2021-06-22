@@ -59,20 +59,3 @@
         src: "{{ lets_encrypt_directory_path }}/lego/lego"
         dest: "/usr/bin/lego"
         state: link
-    
-    - name: Install Let's Encrypt cert manager script
-      template:
-        src: lets-encrypt-cert-manager.sh
-        dest: /usr/local/bin
-        owner: root
-        group: root
-        mode: 0755
-
-    - name: "Install Let's Encrypt cert manager systemd service template"
-      template:
-        src: lets-encrypt-cert-manager@.service
-        dest: /lib/systemd/system
-        owner: root
-        group: root
-        mode: 0644
-      notify: systemd daemon-reload

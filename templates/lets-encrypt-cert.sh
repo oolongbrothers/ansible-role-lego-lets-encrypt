@@ -17,6 +17,11 @@ if [[ -v LETS_ENCRYPT_USE_EXTERNAL_CSR ]]; then
     EXTRA_PARAMETERS="${EXTRA_PARAMETERS} --csr=${LETS_ENCRYPT_DIRECTORY_PATH}/requests/${LETS_ENCRYPT_RESOURCE_COMMON_NAME_ESCAPED}.csr"
 fi
 
+COMMAND_EXTRA_PARAMETERS=""
+if [[ -v LETS_ENCRYPT_OCSP_MUST_STAPLE ]]; then
+    COMMAND_EXTRA_PARAMETERS="${COMMAND_EXTRA_PARAMETERS} --must-staple"
+fi
+
 if [[ -f "${LETS_ENCRYPT_DIRECTORY_PATH}/certificates/${LETS_ENCRYPT_RESOURCE_COMMON_NAME_ESCAPED}.crt" ]]; then
     # renew the certificate
     /usr/bin/lego \
@@ -27,7 +32,8 @@ if [[ -f "${LETS_ENCRYPT_DIRECTORY_PATH}/certificates/${LETS_ENCRYPT_RESOURCE_CO
         ${EXTRA_PARAMETERS} \
         --accept-tos \
         renew \
-        --days "${LETS_ENCRYPT_RENEW_LIMIT}"
+        --days "${LETS_ENCRYPT_RENEW_LIMIT}" \
+        ${COMMAND_EXTRA_PARAMETERS}
 else
     # Register an account, then create and install the certificate
     /usr/bin/lego \
@@ -37,5 +43,6 @@ else
         --server="${LETS_ENCRYPT_SERVER}" \
         ${EXTRA_PARAMETERS} \
         --accept-tos \
-        run
+        run \
+        ${COMMAND_EXTRA_PARAMETERS}
 fi

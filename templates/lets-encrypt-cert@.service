@@ -8,8 +8,7 @@ OnFailure={{ lets_encrypt_service_notify_on_failure }}
 User={{ lets_encrypt_client_user }}
 Type=oneshot
 RemainAfterExit=false
-ExecStart=/usr/local/bin/lets-encrypt-cert-manager.sh
-ExecStop=/bin/true
+ExecStart=/usr/local/bin/lets-encrypt-cert.sh
 
 [Install]
 WantedBy=multi-user.target
