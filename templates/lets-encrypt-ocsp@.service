@@ -1,6 +1,7 @@
 [Unit]
-Description=Service for automatically keeping OSCP stapling information up to date for %i
+Description=Service for automatically keeping OCSP stapling information up to date for %i
 After=lets-encrypt-cert@%i.service
+Wants=lets-encrypt-cert@%i.service
 {% if lets_encrypt_service_notify_on_failure -%}
 OnFailure={{ lets_encrypt_service_notify_on_failure }}
 {% endif %}
