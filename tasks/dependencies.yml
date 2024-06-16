@@ -6,7 +6,7 @@
 
     - name: "Install required packages DEBIAN"
       package:
-        name: ["libcurl4-openssl-dev", "python-pip"]
+        name: ["libcurl4-openssl-dev", "python3-pip"]
         state: "present"
       when: ansible_os_family == 'Debian'
 
@@ -20,4 +20,4 @@
       pip:
         name: ["cryptography ", "pyopenssl"]
         state: "latest"
-        executable: "pip"
+        executable: "pip3"
